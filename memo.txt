@@ -1,0 +1,7 @@
+# 1. 가상환경(독방) 안으로 들어가기
+.\venv\Scripts\Activate.ps1
+
+# 2. 가상환경이 켜진 상태에서 다시 서버 실행하기
+uvicorn app.main:app --reload
+
+http://127.0.0.1:8000/docs
