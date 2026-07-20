@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>쌀국수 키오스크</title>
+</head>
+<body>
+
+<h1>🍜 PHO KIOSK</h1>
+<hr>
+
+<!-- 키오스크 메인 레이아웃 테이블 -->
+<table border="1" style="width: 100%; height: 500px; text-align: center;">
+    <tr>
+        <!-- [왼쪽 영역] 메뉴 선택 카테고리 (가로 폭 40% 차지) -->
+        <td style="width: 40%; vertical-align: top; padding: 20px;">
+            <h3>메뉴 선택</h3>
+            <hr>
+
+            <!-- 메뉴 버튼 목록 -->
+            <p><button style="width: 80%; height: 50px;">🔥 소고기 쌀국수</button></p>
+            <p><button style="width: 80%; height: 50px;">🌱 매운 쌀국수</button></p>
+            <p><button style="width: 80%; height: 50px;">🍤 짜조 (3pc)</button></p>
+            <p><button style="width: 80%; height: 50px;">🥤 콜라 / 사이다</button></p>
+
+            <hr>
+            <!-- 주문 요약창 (선택된 항목 개수 등) -->
+            <p>선택된 메뉴 수: 0개</p>
+        </td>
+
+        <!-- [오른쪽 영역] 메뉴 상세 정보 및 사진 (가로 폭 60% 차지) -->
+        <td style="width: 60%; vertical-align: top; padding: 20px;">
+            <h3>메뉴 상세 정보</h3>
+            <hr>
+
+            <!-- 메뉴 이미지 들어가는 칸 -->
+            <table border="1" style="width: 80%; margin: 0 auto; height: 200px;">
+                <tr>
+                    <td>
+                        <!-- 아까 받아온 파이썬 venv 폴더 옆에 static 폴더를 파서 이미지를 넣거나, 테스트용 임시 이미지 링크를 넣으면 됩니다 -->
+                        <img src="https://via.placeholder.com/250x150" alt="메뉴 사진" width="250" height="150">
+                        <p>[ 메뉴 사진 영역 ]</p>
+                    </td>
+                </tr>
+            </table>
+
+            <br>
+
+            <!-- 메뉴명 및 가격 정보 -->
+            <h2>선택된 메뉴: 소고기 쌀국수</h2>
+            <h3>가 격: 9,500원</h3>
+
+            <hr>
+
+            <!-- 주문하기 액션 버튼 -->
+            <button style="width: 50%; height: 60px; background-color: #ff4d4d; color: white; font-size: 18px; font-weight: bold;">
+                🛒 주문 담기
+            </button>
+        </td>
+    </tr>
+</table>
+
+<br>
+
+<!-- [하단 영역] 장바구니 및 최종 결제 -->
+<table border="1" style="width: 100%; text-align: center; height: 100px;">
+    <tr>
+        <td style="width: 70%;">
+            <strong>선택한 장바구니 목록:</strong> 소고기 쌀국수 1개 | 총 9,500원
+        </td>
+        <td style="width: 30%; background-color: #4CAF50;">
+            <button style="width: 100%; height: 100%; background: none; border: none; color: white; font-size: 20px; font-weight: bold; cursor: pointer;">
+                💳 결제하기
+            </button>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
