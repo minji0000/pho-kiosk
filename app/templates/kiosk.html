@@ -2,79 +2,195 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>쌀국수 키오스크</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pho Kiosk</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; }
+        body { background-color: #f4f4f7; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+        /* 헤더 */
+        header { background-color: #2c3e50; color: white; padding: 15px 20px; text-align: center; font-size: 24px; font-weight: bold; }
+
+        /* 메인 컨테이너 */
+        .kiosk-container { display: flex; flex: 1; overflow: hidden; }
+
+        /* 왼쪽 카테고리 (메인, 사이드, 음료) */
+        .category-sidebar { width: 25%; background-color: #34495e; display: flex; flex-direction: column; gap: 10px; padding: 15px; }
+        .category-btn { padding: 20px 10px; background-color: #455a64; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .category-btn.active { background-color: #e74c3c; transform: scale(1.02); }
+
+        /* 오른쪽 메뉴 리스트 영역 */
+        .menu-section { width: 75%; padding: 20px; overflow-y: auto; background-color: #f8f9fa; }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+
+        /* 메뉴 카드 */
+        .menu-card { background: white; border: 1px solid #e0e0e0; border-radius: 12px; padding: 15px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s; }
+        .menu-card:hover { transform: translateY(-5px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
+        .menu-img { width: 100%; height: 120px; background-color: #eee; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 40px; margin-bottom: 10px; }
+        .menu-title { font-size: 18px; font-weight: bold; margin-bottom: 5px; color: #333; }
+        .menu-price { font-size: 16px; color: #e74c3c; font-weight: bold; }
+
+        /* 하단 장바구니 바 */
+        .cart-bar { background-color: #ffffff; border-top: 2px solid #ddd; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -4px 10px rgba(0,0,0,0.05); }
+        .cart-info { font-size: 18px; font-weight: bold; color: #333; }
+        .cart-btn { background-color: #27ae60; color: white; border: none; padding: 12px 25px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; }
+
+        /* 장바구니 팝업 (모달) */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+        .modal-content { background: white; width: 400px; border-radius: 12px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; padding-bottom: 10px; font-size: 20px; font-weight: bold; }
+        .cart-list { max-height: 250px; overflow-y: auto; margin: 15px 0; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        .cart-item { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 16px; }
+        .close-btn { background: none; border: none; font-size: 20px; cursor: pointer; }
+        .pay-btn { width: 100%; background-color: #e74c3c; color: white; border: none; padding: 15px; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+    </style>
 </head>
 <body>
 
-<h1>🍜 PHO KIOSK</h1>
-<hr>
+<header>🍜 쫀득 쌀국수</header>
 
-<!-- 키오스크 메인 레이아웃 테이블 -->
-<table border="1" style="width: 100%; height: 500px; text-align: center;">
-    <tr>
-        <!-- [왼쪽 영역] 메뉴 선택 카테고리 (가로 폭 40% 차지) -->
-        <td style="width: 40%; vertical-align: top; padding: 20px;">
-            <h3>메뉴 선택</h3>
-            <hr>
+<div class="kiosk-container">
+    <!-- 왼쪽 카테고리 -->
+    <div class="category-sidebar">
+        <button class="category-btn active" onclick="showCategory('main')">메인메뉴</button>
+        <button class="category-btn" onclick="showCategory('side')">사이드</button>
+        <button class="category-btn" onclick="showCategory('drink')">음료</button>
+    </div>
 
-            <!-- 메뉴 버튼 목록 -->
-            <p><button style="width: 80%; height: 50px;">🔥 소고기 쌀국수</button></p>
-            <p><button style="width: 80%; height: 50px;">🌱 매운 쌀국수</button></p>
-            <p><button style="width: 80%; height: 50px;">🍤 짜조 (3pc)</button></p>
-            <p><button style="width: 80%; height: 50px;">🥤 콜라 / 사이다</button></p>
+    <!-- 오른쪽 메뉴판 -->
+    <div class="menu-section">
+        <div id="menu-grid" class="menu-grid">
+            <!-- 자바스크립트로 메뉴가 동적으로 렌더링됩니다 -->
+        </div>
+    </div>
+</div>
 
-            <hr>
-            <!-- 주문 요약창 (선택된 항목 개수 등) -->
-            <p>선택된 메뉴 수: 0개</p>
-        </td>
+<!-- 하단 간이 장바구니 바 -->
+<div class="cart-bar">
+    <div class="cart-info">
+        총 선택: <span id="cart-count" style="color:#e74c3c;">0</span>개 |
+        금액: <span id="cart-total" style="color:#e74c3c;">0</span>원
+    </div>
+    <button class="cart-btn" onclick="openCart()">🛒 장바구니 보기</button>
+</div>
 
-        <!-- [오른쪽 영역] 메뉴 상세 정보 및 사진 (가로 폭 60% 차지) -->
-        <td style="width: 60%; vertical-align: top; padding: 20px;">
-            <h3>메뉴 상세 정보</h3>
-            <hr>
+<!-- 장바구니 팝업 (모달) -->
+<div id="cart-modal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span>🛒 장바구니 목록</span>
+            <button class="close-btn" onclick="closeCart()">✖</button>
+        </div>
+        <div id="cart-list" class="cart-list">
+            <!-- 선택된 메뉴 목록이 들어갑니다 -->
+        </div>
+        <div style="font-size: 18px; font-weight: bold; text-align: right;">
+            최종 결제금액: <span id="modal-total" style="color: #e74c3c;">0</span>원
+        </div>
+        <button class="pay-btn" onclick="submitOrder()">💳 결제하기</button>
+    </div>
+</div>
 
-            <!-- 메뉴 이미지 들어가는 칸 -->
-            <table border="1" style="width: 80%; margin: 0 auto; height: 200px;">
-                <tr>
-                    <td>
-                        <!-- 아까 받아온 파이썬 venv 폴더 옆에 static 폴더를 파서 이미지를 넣거나, 테스트용 임시 이미지 링크를 넣으면 됩니다 -->
-                        <img src="https://via.placeholder.com/250x150" alt="메뉴 사진" width="250" height="150">
-                        <p>[ 메뉴 사진 영역 ]</p>
-                    </td>
-                </tr>
-            </table>
+<script>
+    // 메뉴 데이터 정의
+    const menuData = {
+        main: [
+            { id: 1, name: '맑은 쌀국수', price: 9500, emoji: '🍜' },
+            { id: 2, name: '매운 쌀국수', price: 10000, emoji: '🌶️' },
+            { id: 3, name: '분짜', price: 12000, emoji: '🥗' },
+            { id: 4, name: '팟타이', price: 11000, emoji: '🍳' }
+        ],
+        side: [
+            { id: 5, name: '짜조 (3pc)', price: 4500, emoji: '🥟' },
+            { id: 6, name: '스프링롤', price: 5000, emoji: '🌯' },
+            { id: 7, name: '닭봉튀김 (4pc)', price: 5500, emoji: '🍗' }
+        ],
+        drink: [
+            { id: 8, name: '콜라', price: 2000, emoji: '🥤' },
+            { id: 9, name: '사이다', price: 2000, emoji: '🥤' },
+            { id: 10, name: '환타', price: 2000, emoji: '🍊' },
+            { id: 11, name: '베트남 연유커피', price: 3500, emoji: '☕' }
+        ]
+    };
 
-            <br>
+    let cart = [];
 
-            <!-- 메뉴명 및 가격 정보 -->
-            <h2>선택된 메뉴: 소고기 쌀국수</h2>
-            <h3>가 격: 9,500원</h3>
+    // 화면 켜지면 메인메뉴 기본 렌더링
+    window.onload = () => {
+        showCategory('main');
+    };
 
-            <hr>
+    // 카테고리 전환 함수
+    function showCategory(category) {
+        // 버튼 활성화 클래스 변경
+        const buttons = document.querySelectorAll('.category-btn');
+        buttons.forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
 
-            <!-- 주문하기 액션 버튼 -->
-            <button style="width: 50%; height: 60px; background-color: #ff4d4d; color: white; font-size: 18px; font-weight: bold;">
-                🛒 주문 담기
-            </button>
-        </td>
-    </tr>
-</table>
+        // 메뉴 리스트 그리기
+        const grid = document.getElementById('menu-grid');
+        grid.innerHTML = '';
 
-<br>
+        menuData[category].forEach(item => {
+            grid.innerHTML += `
+                    <div class="menu-card" onclick="addToCart('${item.name}', ${item.price})">
+                        <div class="menu-img">${item.emoji}</div>
+                        <div class="menu-title">${item.name}</div>
+                        <div class="menu-price">${item.price.toLocaleString()}원</div>
+                    </div>
+                `;
+        });
+    }
 
-<!-- [하단 영역] 장바구니 및 최종 결제 -->
-<table border="1" style="width: 100%; text-align: center; height: 100px;">
-    <tr>
-        <td style="width: 70%;">
-            <strong>선택한 장바구니 목록:</strong> 소고기 쌀국수 1개 | 총 9,500원
-        </td>
-        <td style="width: 30%; background-color: #4CAF50;">
-            <button style="width: 100%; height: 100%; background: none; border: none; color: white; font-size: 20px; font-weight: bold; cursor: pointer;">
-                💳 결제하기
-            </button>
-        </td>
-    </tr>
-</table>
+    // 장바구니 담기
+    function addToCart(name, price) {
+        cart.push({ name, price });
+        updateCartBar();
+    }
+
+    // 하단 장바구니 정보 업데이트
+    function updateCartBar() {
+        document.getElementById('cart-count').innerText = cart.length;
+        const total = cart.reduce((sum, item) => sum + item.price, 0);
+        document.getElementById('cart-total').innerText = total.toLocaleString();
+    }
+
+    // 장바구니 팝업 열기/닫기
+    function openCart() {
+        if (cart.length === 0) {
+            alert('장바구니가 비어있습니다!');
+            return;
+        }
+        const cartList = document.getElementById('cart-list');
+        cartList.innerHTML = '';
+        let total = 0;
+
+        cart.forEach((item, index) => {
+            total += item.price;
+            cartList.innerHTML += `
+                    <div class="cart-item">
+                        <span>${item.name}</span>
+                        <span>${item.price.toLocaleString()}원</span>
+                    </div>
+                `;
+        });
+
+        document.getElementById('modal-total').innerText = total.toLocaleString();
+        document.getElementById('cart-modal').style.display = 'flex';
+    }
+
+    function closeCart() {
+        document.getElementById('cart-modal').style.display = 'none';
+    }
+
+    // 결제하기 클릭 이벤트
+    function submitOrder() {
+        alert('주문이 접수되었습니다! 🍜');
+        cart = [];
+        updateCartBar();
+        closeCart();
+    }
+</script>
 
 </body>
 </html>
