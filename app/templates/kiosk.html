@@ -184,11 +184,46 @@
     }
 
     // 결제하기 클릭 이벤트
-    function submitOrder() {
-        alert('주문이 접수되었습니다! 🍜');
-        cart = [];
-        updateCartBar();
-        closeCart();
+    // 결제하기 버튼 클릭 시 백엔드 API 호출
+    async function submitOrder() {
+        if (cart.length === 0) {
+            alert('장바구니가 비어있습니다!');
+            return;
+        }
+
+        const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
+
+        // 백엔드 요청 데이터 포맷 생성
+        const orderData = {
+            items: cart.map(item => ({ name: item.name, price: item.price })),
+            total_price: totalPrice
+        };
+
+        try {
+            // FastAPI /orders 주소로 POST 요청
+            const response = await fetch('/orders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(orderData)
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                alert(`🎉 ${result.message}\n[주문번호: #${result.order_id}]`);
+
+                // 장바구니 초기화 및 모달 닫기
+                cart = [];
+                updateCartBar();
+                closeCart();
+            } else {
+                alert('주문 처리 중 오류가 발생했습니다.');
+            }
+        } catch (error) {
+            console.error('Error submitting order:', error);
+            alert('서버와 통신할 수 없습니다.');
+        }
     }
 </script>
 
