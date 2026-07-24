@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from pydantic import BaseModel
+from pydantic import BaseModel   
 from typing import List
 
 router = APIRouter(
@@ -7,50 +7,39 @@ router = APIRouter(
     tags=["Orders"]
 )
 
-# --------------------------------------------------
-# [1] Request/Response 데이터 구조 정의 (Pydantic)
-# --------------------------------------------------
-
-# 주문에 담길 개별 메뉴 아이템
+# 1. Pydantic 요청 스키마 정의
 class OrderItem(BaseModel):
-    name: str      # 메뉴 이름 (예: '매운 쌀국수')
-    price: int     # 가격 (예: 10000)
+    name: str
+    price: int
 
-# 결제 요청 시 백엔드로 넘어오는 전체 주문 데이터
 class OrderCreateRequest(BaseModel):
-    items: List[OrderItem]  # 선택한 메뉴 목록
-    total_price: int        # 총 결제 금액
+    items: List[OrderItem]
+    total_price: int
 
-# --------------------------------------------------
-# [2] 가짜 DB (메모리 저장소)
-# --------------------------------------------------
+# 2. 임시 저장용 리스트
 orders_db = []
 order_id_counter = 1
 
-# --------------------------------------------------
-# [3] 주문 결제 처리 API (POST /orders)
-# --------------------------------------------------
+# 3. 결제 처리 API (POST /orders)
 @router.post("")
+@router.post("/")  # 슬래시(/) 유무 상관없이 둘 다 받도록 처리
 def create_order(order_data: OrderCreateRequest):
     global order_id_counter
 
-    # 1. 새로운 주문 객체 생성
     new_order = {
         "order_id": order_id_counter,
-        "items": order_data.items,
+        "items": [item.model_dump() for item in order_data.items],
         "total_price": order_data.total_price,
-        "status": "PAID"  # 결제 완료 상태
+        "status": "PAID"
     }
 
-    # 2. 가짜 DB에 저장
     orders_db.append(new_order)
+    print(f"\n==========================================")
+    print(f"🎉 [주문 성공] 번호: #{order_id_counter} | 총액: {order_data.total_price}원")
+    print(f"==========================================\n")
 
-    print(f"NEW ORDER RECEIVED! [주문번호 #{order_id_counter}] 총액: {order_data.total_price}원")
-
-    # 3. 주문 번호 증가
     order_id_counter += 1
 
-    # 4. 프론트엔드로 성공 응답 전달
     return {
         "message": "주문 및 결제가 성공적으로 완료되었습니다! 🍜",
         "order_id": new_order["order_id"],
